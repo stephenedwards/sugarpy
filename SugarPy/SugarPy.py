@@ -20,7 +20,7 @@ class App(threading.Thread):
 
     def run(self):
         self.root = tk.Tk()
-        #root.attributes('-fullscreen', True)
+        self.root.attributes('-fullscreen', True)
         self.label = tk.Label(self.root, text=self.glyco_text, font=("Helvetica", 48)) # Create a text label
         self.label.pack(padx=20, pady=20, expand=1) # Pack it into the window
         self.root.mainloop()
