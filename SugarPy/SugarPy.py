@@ -31,7 +31,7 @@ class App(threading.Thread):
     def run(self):
         self.root = tk.Tk()
         self.root.configure(background='black')
-        #self.root.attributes('-fullscreen', True)
+        self.root.attributes('-fullscreen', True)
         self.lblGlyco = tk.Label(self.root, text=self.glyco_text, font=("Helvetica", 72), bg="black", fg="white")
         self.lblTime = tk.Label(self.root, text="time", font=("Helvetica", 30), bg="black", fg="white")
         self.lblGlyco.pack(padx=20, pady=20, expand=1) # Pack it into the window
