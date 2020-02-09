@@ -2,7 +2,9 @@ import tkinter as tk
 import threading
 import urllib.request, json 
 import sched, time
-   
+from datetime import datetime
+
+
 
 class App(threading.Thread):
     glyco_text = "waiting for value"
@@ -13,16 +15,27 @@ class App(threading.Thread):
     def callback(self):
         self.root.quit()
 
+    def setData(self,data):
+        self.data = data
+        self.lblGlyco['text'] = str(self.data['value']) +" mg/dl " + self.data['trend_symbol']
+        now = datetime.now()
+        current_time = now.strftime("%H:%M:%S")
+        self.lblTime['text'] = current_time
+        print("Current Time =", current_time)
+
     def setGlycoText(self, valueText):
         print("Updating value to "+valueText)
         self.glyco_text = valueText
-        self.label['text'] = valueText+" mg/dl"
+        
 
     def run(self):
         self.root = tk.Tk()
-        self.root.attributes('-fullscreen', True)
-        self.label = tk.Label(self.root, text=self.glyco_text, font=("Helvetica", 48)) # Create a text label
-        self.label.pack(padx=20, pady=20, expand=1) # Pack it into the window
+        self.root.configure(background='black')
+        #self.root.attributes('-fullscreen', True)
+        self.lblGlyco = tk.Label(self.root, text=self.glyco_text, font=("Helvetica", 72), bg="black", fg="white")
+        self.lblTime = tk.Label(self.root, text="time", font=("Helvetica", 30), bg="black", fg="white")
+        self.lblGlyco.pack(padx=20, pady=20, expand=1) # Pack it into the window
+        self.lblTime.pack(padx=20, pady=20, expand=1) # Pack it into the window
         self.root.mainloop()
 
 app = App()
@@ -30,11 +43,11 @@ app = App()
 def getGlycoApi(s):
     with urllib.request.urlopen("http://sugarmate.io/api/v1/83y9kt/latest.json") as url:
         data = json.loads(url.read().decode())    
-        app.setGlycoText(str(data["value"]))
-        s.enter(5, 1, getGlycoApi, (s,))
+        app.setData(data)
+        s.enter(60, 1, getGlycoApi, (s,))
 
 s = sched.scheduler(time.time, time.sleep)
-s.enter(5, 1, getGlycoApi, (s,))
+getGlycoApi(s)
 s.run()
     
 
